@@ -18,8 +18,8 @@ class ShortUrl(Base):
     shortcode = Column(String(6), unique=True, index=True, nullable=False)
     url = Column(Text, nullable=False)
     redirect_count = Column(Integer, nullable=False, default=0)
-    created_at = Column(DateTime, nullable=False, default=datetime.utcnow)
-    updated_at = Column(DateTime, nullable=False, default=datetime.utcnow)
+    created_at = Column(DateTime, nullable=False, default=datetime.now)
+    updated_at = Column(DateTime, nullable=False, default=datetime.now)
     last_redirect_at = Column(DateTime)
 
 
