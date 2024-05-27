@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
 
-from db.models import ShortUrl
+from app.db.models import ShortUrl
 
 
 def get_short_url(db: Session, shortcode: str) -> ShortUrl:

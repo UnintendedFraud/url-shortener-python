@@ -1,6 +1,6 @@
 from collections import namedtuple
 
-from utils.shortcode import generate_shortcode, is_shortcode_valid
+from app.utils.shortcode import generate_shortcode, is_shortcode_valid
 
 IsShortcodeValidExample = namedtuple(
     'IsShortcodeValidExample', ['code', 'expected'])

@@ -3,7 +3,7 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 
 
-from api import endpoints
+from app.api import endpoints
 
 app = FastAPI()
 app.include_router(endpoints.router)

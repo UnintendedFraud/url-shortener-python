@@ -13,11 +13,10 @@ from pydantic import BaseModel
 
 from dotenv import load_dotenv
 
-from db.short_urls import create_short_url, get_short_url
+from app.db.short_urls import create_short_url, get_short_url
+from app.utils.shortcode import is_shortcode_valid, generate_shortcode
 
 from psycopg2.errors import UniqueViolation
-
-from utils.shortcode import is_shortcode_valid, generate_shortcode
 
 
 import os
@@ -155,4 +154,3 @@ def shorten_url(payload: ShortenPayload):
         db.close()
 
     return JSONResponse({"shortcode": shortcode}, status_code=201)
-
