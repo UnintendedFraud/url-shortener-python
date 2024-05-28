@@ -1,26 +1,30 @@
-from collections import namedtuple
+from dataclasses import dataclass
 
 from app.utils.shortcode import generate_shortcode, is_shortcode_valid
 
-IsShortcodeValidExample = namedtuple(
-    'IsShortcodeValidExample', ['code', 'expected'])
+
+@dataclass
+class Example:
+    data: str
+    expected: bool
 
 
 def test_is_shortcode_valid():
     examples = [
-        IsShortcodeValidExample("invalid_code", False),
-        IsShortcodeValidExample("w_R3d)", False),
-        IsShortcodeValidExample("", False),
-        IsShortcodeValidExample(None, False),
+        Example(data="invalid_code", expected=False),
+        Example(data="w_R3d)", expected=False),
+        Example(data="", expected=False),
+        Example(data=None, expected=False),
 
-        IsShortcodeValidExample("w_R3dK", True),
+        Example(data="w_R3dK", expected=True),
     ]
 
     for ex in examples:
-        assert is_shortcode_valid(ex.code) == ex.expected
+        assert is_shortcode_valid(ex.data) == ex.expected
 
 
 def test_generate_shortcode():
-    code = generate_shortcode()
+    for i in range(10):
+        code = generate_shortcode()
 
-    assert is_shortcode_valid(code)
+        assert is_shortcode_valid(code)
