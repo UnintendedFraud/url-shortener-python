@@ -1,0 +1,47 @@
+services:
+  db:
+    image: postgres
+    environment:
+      POSTGRES_USER: test_user
+      POSTGRES_PASSWORD: test_password
+      POSTGRES_DB: shortener_db
+
+    networks:
+      - shortener_network
+
+    ports:
+      - "5433:5432"
+
+
+  api:
+    build: .
+    command: fastapi run
+
+    volumes:
+      - .:/app
+
+    ports:
+      - "8000:8000"
+
+    depends_on:
+      - db
+
+    networks:
+      - shortener_network
+
+
+  init_db:
+    build: .
+    command: ["python", "app/db/init_db.py"]
+    
+    depends_on:
+      - db
+
+    networks:
+      - shortener_network
+
+
+networks:
+  shortener_network:
+    driver: bridge
+

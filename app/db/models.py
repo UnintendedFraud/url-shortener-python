@@ -1,12 +1,9 @@
-from sqlalchemy import Column, String, Integer, Text, DateTime, create_engine
+from sqlalchemy import Column, String, Integer, Text, DateTime
 from sqlalchemy.orm import declarative_base
 from sqlalchemy.dialects.postgresql import UUID
 
 from datetime import datetime
 import uuid
-import os
-
-from dotenv import load_dotenv
 
 
 Base = declarative_base()
@@ -21,10 +18,3 @@ class ShortUrl(Base):
     created_at = Column(DateTime, nullable=False, default=datetime.now)
     updated_at = Column(DateTime, nullable=False, default=datetime.now)
     last_redirect_at = Column(DateTime)
-
-
-load_dotenv()
-DATABASE_URL = os.getenv("DATABASE_URL")
-
-engine = create_engine(DATABASE_URL)
-Base.metadata.create_all(bind=engine)

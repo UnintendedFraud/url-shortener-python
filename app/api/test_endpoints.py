@@ -10,7 +10,12 @@ from psycopg2.errors import UniqueViolation
 
 from fastapi.testclient import TestClient
 
+
 client = TestClient(app)
+
+
+def iso_datetime(dt):
+    return dt.isoformat()
 
 
 def get_valid_short_url(mock):
@@ -24,8 +29,8 @@ def get_valid_short_url(mock):
 
 def get_valid_shorten_payload():
     return {
-        "shortcode": "valid_",
-        "url": "https://example.com",
+        "shortcode": "  valid_  ",
+        "url": "   https://example.com  ",
     }
 
 
@@ -141,6 +146,11 @@ class Test_Shorten:
 
         assert res.status_code == 400
 
+    def test_invalid_url_payload(self):
+        res = client.post("/shorten", json={"url": "invalid_url"})
+
+        assert res.status_code == 400
+
     def test_invalid_shortcode_payload(self, mock_is_shortcode_valid):
         mock_is_shortcode_valid.return_value = False
 
@@ -184,4 +194,4 @@ class Test_Shorten:
         res = client.post("/shorten", json=payload)
 
         assert res.status_code == 201
-        assert res.json() == {"shortcode": payload["shortcode"]}
+        assert res.json() == {"shortcode": payload["shortcode"].strip()}
