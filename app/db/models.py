@@ -16,5 +16,4 @@ class ShortUrl(Base):
     url = Column(Text, nullable=False)
     redirect_count = Column(Integer, nullable=False, default=0)
     created_at = Column(DateTime, nullable=False, default=datetime.now)
-    updated_at = Column(DateTime, nullable=False, default=datetime.now)
     last_redirect_at = Column(DateTime)

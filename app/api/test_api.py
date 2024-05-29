@@ -1,13 +1,13 @@
 import pytest
 
 from app.main import app
-from app.api.endpoints import redirect_to_url
+from app.api.api import Api
 
-from sqlalchemy.orm.exc import NoResultFound
 from sqlalchemy.exc import DBAPIError
 
 from psycopg2.errors import UniqueViolation
 
+from fastapi import HTTPException
 from fastapi.testclient import TestClient
 
 
@@ -23,6 +23,7 @@ def get_valid_short_url(mock):
     mock.last_redirect_at.isoformat.return_value = "2024-05-27T00:00:00"
     mock.redirect_count = 5
     mock.url = "https://example.com"
+    mock.shortcode = "valid_"
 
     return mock
 
@@ -40,18 +41,18 @@ def mock_session(mocker):
 
 
 @pytest.fixture
-def mock_get_short_url(mocker):
-    return mocker.patch("app.api.endpoints.get_short_url")
+def mock_get_by_shortcode(mocker):
+    return mocker.patch("app.api.api.ShortUrlObj.get_by_shortcode")
 
 
 @pytest.fixture
 def mock_is_shortcode_valid(mocker):
-    return mocker.patch("app.api.endpoints.is_shortcode_valid")
+    return mocker.patch("app.api.api.is_shortcode_valid")
 
 
 @pytest.fixture
 def mock_create_short_url(mocker):
-    return mocker.patch("app.api.endpoints.create_short_url")
+    return mocker.patch("app.api.api.ShortUrlObj.create")
 
 
 class Test_GetShortcode:
@@ -65,21 +66,24 @@ class Test_GetShortcode:
     def test_shortcode_not_found(
         self,
         mocker,
-        mock_get_short_url,
+        mock_session,
+        mock_get_by_shortcode,
         mock_is_shortcode_valid,
     ):
         mock_is_shortcode_valid.return_value = True
 
-        mock_get_short_url.side_effect = NoResultFound()
+        mock_get_by_shortcode.return_value = None
 
-        res = client.get("/valid_")
+        with pytest.raises(HTTPException) as e:
+            Api().redirect_to_url(mock_session, "non_existing_code")
 
-        assert res.status_code == 404
+        assert e.value.status_code == 404
 
     def test_use_shortcode(
             self,
             mocker,
-            mock_get_short_url,
+            mock_session,
+            mock_get_by_shortcode,
             mock_is_shortcode_valid,
     ):
         mock_is_shortcode_valid.return_value = True
@@ -87,9 +91,9 @@ class Test_GetShortcode:
         valid_short_url = get_valid_short_url(mocker.Mock())
         expected_redirect_count = valid_short_url.redirect_count + 1
 
-        mock_get_short_url.return_value = valid_short_url
+        mock_get_by_shortcode.return_value = valid_short_url
 
-        res = redirect_to_url(valid_short_url.shortcode)
+        res = Api().redirect_to_url(mock_session, valid_short_url.shortcode)
 
         assert res.status_code == 302
         assert res.headers["location"] == valid_short_url.url
@@ -107,12 +111,12 @@ class Test_ShortcodeStats:
     def test_shortcode_not_found(
         self,
         mocker,
-        mock_get_short_url,
+        mock_get_by_shortcode,
         mock_is_shortcode_valid,
     ):
         mock_is_shortcode_valid.return_value = True
 
-        mock_get_short_url.side_effect = NoResultFound()
+        mock_get_by_shortcode.return_value = None
 
         res = client.get("/valid_/stats")
 
@@ -122,13 +126,14 @@ class Test_ShortcodeStats:
         self,
         mock_session,
         mocker,
-        mock_get_short_url,
+        mock_get_by_shortcode,
         mock_is_shortcode_valid,
     ):
         mock_is_shortcode_valid.return_value = True
+        mock_session.commit.return_value = None
 
         valid_short_url = get_valid_short_url(mocker.Mock())
-        mock_get_short_url.return_value = valid_short_url
+        mock_get_by_shortcode.return_value = valid_short_url
 
         res = client.get("/valid_/stats")
 
