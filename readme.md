@@ -1,23 +1,32 @@
 # url shortener in python
 
-## setup
+This project is an URL shortener written in python, using fastapi and postgres.  
+It is a simple API allowing you to shorten an URL, get redirected from a shortcode and getting 
+some stats about a specific one.
 
-- add `.env` file with the postgres url
-- init DB / explain why models and init are in the same file (didn't know how to not do that)
+This project was developed and tested using Python 3.12.
 
-## model 
+## Setup the virtual environment
 
-everything is one table for simplicity as per required, instead of having 2 tables which would probably 
-be better in a real scenario
+Make sure you do have `virtualenv` on your system first. If not, please install it from 
+(https://virtualenv.pypa.io/en/latest/installation.html)[https://virtualenv.pypa.io/en/latest/installation.html].
+
+After cloning this repo and being in the project's folder, please follow those steps:
+
+1. Create a virtual environment 
+```virtualenv venv```
+
+2. Activate it (linux and macos)
+```source ./venv/bin/activate```
+
+3. Install the required dependencies
+```pip install -r requirement.txt```
+
+**Note**: To exit the virtual environment and return to your normal terminal, just type `deactivate`.
 
 
-## shortcode generation
-chose the easiest solution as per the requirement again
+## Run the app
 
-2 other solutions stand out:
-- using the hash of the url and taking the first 6 characters (or the last probably better), regardless 
-still a risk of getting the same shortcode so not really better than what I chose 
+You have 2 ways of running the app: using the `virtualenv` or `docker`.
 
-- it looks like the most reliable way to generate guarantee unique code would be to increment a number in our 
-DB and hash that in base 62, but since in the requirement people can send their own shortcode, this will not 
-guarantee it either
+
