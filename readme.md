@@ -19,16 +19,82 @@ virtualenv venv
 ```
 
 2. Activate it (linux and macos)  
-```source ./venv/bin/activate```
+```bash
+source ./venv/bin/activate
+```
 
 3. Install the required dependencies  
-```pip install -r requirement.txt```
+```bash
+pip install -r requirement.txt
+```
 
-**Note**: To exit the virtual environment and return to your normal terminal, just type `deactivate`.
+4. (Optional?) Turn it off and on again  
+When testing on my end, after installing the dependencies, I had to deactivate and re-activate the virtual 
+environment, otherwise it would act like the dependencies weren't installed.
+```bash 
+deactivate 
+source ./venv/bin/activate
+```
 
 
 ## Run the app
 
-You have 2 ways of running the app: using the `virtualenv` or `docker`.
+You have 2 ways of running the app: using the `virtualenv` or `docker`. 
 
+In both scenarios, you will want to look at the `.env` (normally wouldn't push that but for the 
+sake of the exercice I did, it makes it simpler) and make sure the right `DATABASE_URL` is uncommented.
 
+### Running inside docker
+
+No setup is necessary, you don't even need to be inside the virtual environment.  
+Simply make sure that inside the `.env` file, the docker's `DATABASE_URL` is uncommented.
+
+Then simply run:
+```bash 
+docker-compose up --build 
+```
+
+This will create everything you need and allow you to access the API through 
+[http://0.0.0.0:8000](http://0.0.0.0:8000).
+
+### Running locally in the virtual environment
+
+**1. Update .env with your own database**
+
+First, you need to make sure your postgres database is setup properly and running, then update the `.env` file 
+with your local database credentials (by default is my own local information, lots of default values):
+```bash 
+# docker
+# DATABASE_URL=postgresql://test_user:test_password@db:5432/shortener_db
+
+# local
+DATABASE_URL=postgresql://<username>:<password>@<addr>:<port>/<database_name>
+```
+
+**2. Create the required table**
+
+Run the following script:
+```bash 
+python app/db/init_db.py 
+```
+This will create the table with the right schema.
+
+**3. Run the app**
+
+Then you can run the app with this command:
+```bash 
+fastapi run 
+```
+
+You can go try the app using the `/docs` url highlighted: [http://0.0.0.0:8000/docs](http://0.0.0.0:8000/docs) or 
+any other way you wish.
+
+To test a working scenario of the `GET /<shortcode>` endpoint, I suggest typing the full endpoint directly to 
+the browser to be redirected as expected.
+
+## Running the tests
+
+For those you need to be inside the virtual environment. Then simply run:
+```bash 
+pytest
+```
