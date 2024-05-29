@@ -14,7 +14,9 @@ Make sure you do have `virtualenv` on your system first. If not, please install 
 After cloning this repo and being in the project's folder, please follow those steps:
 
 1. Create a virtual environment   
-```virtualenv venv```
+```bash
+virtualenv venv
+```
 
 2. Activate it (linux and macos)  
 ```source ./venv/bin/activate```
