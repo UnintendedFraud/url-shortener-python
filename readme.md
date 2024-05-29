@@ -6,6 +6,12 @@ some stats about a specific one.
 
 This project was developed and tested using Python 3.12.
 
+## Requirements
+
+- Python 3+
+- Postgres installed on the machine, with the ability to execute `pg_config`
+- `virtualenv` and / or `docker`
+
 ## Setup the virtual environment
 
 Make sure you do have `virtualenv` on your system first. If not, please install it from 
@@ -26,14 +32,6 @@ source ./venv/bin/activate
 3. Install the required dependencies  
 ```bash
 pip install -r requirement.txt
-```
-
-4. (Optional?) Turn it off and on again  
-When testing on my end, after installing the dependencies, I had to deactivate and re-activate the virtual 
-environment, otherwise it would act like the dependencies weren't installed.
-```bash 
-deactivate 
-source ./venv/bin/activate
 ```
 
 
